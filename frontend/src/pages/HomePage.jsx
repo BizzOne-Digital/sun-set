@@ -75,7 +75,7 @@ export default function HomePage() {
           </div>
           <div>
             <p style={{fontSize:11,fontWeight:600,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.7)',textAlign:'center',marginBottom:6}}>Live Availability</p>
-            <AvailabilityChecker roomId={rooms[0]?._id} pricePerNight={rooms[0]?.pricePerNight} onBook={(d) => handleBook(rooms[0], d)} />
+            <AvailabilityChecker rooms={rooms} roomId={rooms[0]?._id} pricePerNight={rooms[0]?.pricePerNight} onBook={(d) => handleBook(rooms[0], d)} />
           </div>
         </div>
       </section>
@@ -103,36 +103,35 @@ export default function HomePage() {
             <div className="gold-divider center"/>
             <h2 className="section-title">Our Accommodations</h2>
           </div>
-          <div style={{display:'flex',flexDirection:'column',gap:24}}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:28}}>
             {rooms.map(room => (
-              <div key={room._id} style={{background:'#fff',display:'grid',gridTemplateColumns:'260px 1fr 290px',boxShadow:'0 4px 20px rgba(0,0,0,0.08)',overflow:'hidden',border:'1px solid #F0EBE0'}}>
-                <div style={{overflow:'hidden'}}>
-                  <img src={room.images?.[0]||'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=500&q=80'} alt={room.name} style={{width:'100%',height:'100%',objectFit:'cover',minHeight:240,transition:'transform 0.5s'}} onMouseEnter={e=>e.target.style.transform='scale(1.06)'} onMouseLeave={e=>e.target.style.transform='scale(1)'}/>
+              <div key={room._id} style={{background:'#fff',border:'1px solid #EDE8E0',borderRadius:8,overflow:'hidden',boxShadow:'0 4px 20px rgba(0,0,0,0.07)',display:'flex',flexDirection:'column'}}>
+                <div style={{height:240,overflow:'hidden',position:'relative'}}>
+                  <img src={room.images?.[0]||'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80'} alt={room.name} style={{width:'100%',height:'100%',objectFit:'cover',transition:'transform 0.5s'}} onMouseEnter={e=>e.target.style.transform='scale(1.05)'} onMouseLeave={e=>e.target.style.transform='scale(1)'}/>
+                  <div style={{position:'absolute',top:14,right:14,background:'#C9933A',color:'#fff',padding:'5px 12px',borderRadius:4,fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700}}>
+                    ${room.pricePerNight}<span style={{fontSize:10,fontWeight:400,fontFamily:"'Poppins',sans-serif"}}>/night</span>
+                  </div>
                 </div>
-                <div style={{padding:'24px 20px'}}>
+                <div style={{padding:'20px',flex:1,display:'flex',flexDirection:'column'}}>
                   <h3 style={{fontFamily:"'Playfair Display',serif",fontSize:20,color:'#1A2540',fontWeight:700,marginBottom:7}}>{room.name}</h3>
-                  <p style={{fontSize:13,color:'#777',lineHeight:1.7,marginBottom:14}}>{room.shortDesc}</p>
-                  <div style={{display:'flex',gap:18,marginBottom:14,flexWrap:'wrap'}}>
-                    <div style={{display:'flex',alignItems:'center',gap:6,fontSize:13,color:'#555'}}><svg width="13" height="13" fill="none" stroke="#C9933A" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>{room.bedrooms} Bed{room.bedrooms>1?'s':''}</div>
-                    <div style={{display:'flex',alignItems:'center',gap:6,fontSize:13,color:'#555'}}><svg width="13" height="13" fill="none" stroke="#C9933A" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 7.7 7 7h-.01C6.72 7.7 5.43 8.33 4.43 9.06 3.3 9.97 2.82 11.07 2.82 12.25c0 2.22 1.8 4.05 4.18 4.05z"/></svg>{room.bathrooms} Bath{room.bathrooms>1?'s':''}</div>
-                    <div style={{display:'flex',alignItems:'center',gap:6,fontSize:13,color:'#555'}}><svg width="13" height="13" fill="none" stroke="#C9933A" strokeWidth="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>{room.maxGuests} Guests</div>
+                  <p style={{fontSize:13,color:'#777',lineHeight:1.7,marginBottom:12}}>{room.shortDesc}</p>
+                  <div style={{display:'flex',gap:16,marginBottom:12,flexWrap:'wrap'}}>
+                    <div style={{display:'flex',alignItems:'center',gap:5,fontSize:13,color:'#555'}}><svg width="13" height="13" fill="none" stroke="#C9933A" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>{room.bedrooms} Bed{room.bedrooms>1?'s':''}</div>
+                    <div style={{display:'flex',alignItems:'center',gap:5,fontSize:13,color:'#555'}}><svg width="13" height="13" fill="none" stroke="#C9933A" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 7.7 7 7h-.01C6.72 7.7 5.43 8.33 4.43 9.06 3.3 9.97 2.82 11.07 2.82 12.25c0 2.22 1.8 4.05 4.18 4.05z"/></svg>{room.bathrooms} Bath{room.bathrooms>1?'s':''}</div>
+                    <div style={{display:'flex',alignItems:'center',gap:5,fontSize:13,color:'#555'}}><svg width="13" height="13" fill="none" stroke="#C9933A" strokeWidth="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>{room.maxGuests} Guests</div>
                   </div>
                   <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:16}}>
                     {(room.amenities||[]).slice(0,5).map(a=><span key={a} style={{background:'#F9F5EE',border:'1px solid #E8DDD0',fontSize:11,padding:'3px 9px',borderRadius:12,color:'#555'}}>{a}</span>)}
                   </div>
-                  <div style={{fontSize:19,fontFamily:"'Playfair Display',serif",fontWeight:700,color:'#C9933A',marginBottom:14}}>${room.pricePerNight}<span style={{fontSize:12,color:'#888',fontFamily:"'Poppins',sans-serif",fontWeight:400}}>/night</span></div>
-                  <div style={{display:'flex',gap:8}}>
-                    {room.airbnbUrl&&<a href={room.airbnbUrl} target="_blank" rel="noreferrer" style={{background:'#FF5A3B',color:'#fff',padding:'7px 14px',fontSize:11,fontWeight:600,textDecoration:'none',borderRadius:3,transition:'opacity 0.2s'}} onMouseEnter={e=>e.currentTarget.style.opacity=0.8} onMouseLeave={e=>e.currentTarget.style.opacity=1}>Airbnb</a>}
-                    {room.vrboUrl&&<a href={room.vrboUrl} target="_blank" rel="noreferrer" style={{background:'#0073E6',color:'#fff',padding:'7px 14px',fontSize:11,fontWeight:600,textDecoration:'none',borderRadius:3,transition:'opacity 0.2s'}} onMouseEnter={e=>e.currentTarget.style.opacity=0.8} onMouseLeave={e=>e.currentTarget.style.opacity=1}>VRBO</a>}
+                  <div style={{display:'flex',gap:8,marginTop:'auto'}}>
+                    {room.airbnbUrl&&<a href={room.airbnbUrl} target="_blank" rel="noreferrer" style={{flex:1,background:'#FF5A3B',color:'#fff',padding:'9px',fontSize:11,fontWeight:600,textDecoration:'none',borderRadius:4,textAlign:'center'}}>Airbnb</a>}
+                    {room.vrboUrl&&<a href={room.vrboUrl} target="_blank" rel="noreferrer" style={{flex:1,background:'#0073E6',color:'#fff',padding:'9px',fontSize:11,fontWeight:600,textDecoration:'none',borderRadius:4,textAlign:'center'}}>VRBO</a>}
+                    <a href="https://wa.me/18762689319" target="_blank" rel="noreferrer" style={{flex:1,background:'#25D366',color:'#fff',padding:'9px',fontSize:11,fontWeight:600,textDecoration:'none',borderRadius:4,textAlign:'center'}}>WhatsApp</a>
                   </div>
-                </div>
-                <div style={{padding:'20px 16px',borderLeft:'1px solid #F0EBE0',background:'#FDFAF6'}}>
-                  <p style={{fontSize:11,fontWeight:600,letterSpacing:'0.08em',textTransform:'uppercase',color:'#888',marginBottom:8,textAlign:'center'}}>Check Availability</p>
-                  <AvailabilityChecker roomId={room._id} pricePerNight={room.pricePerNight} onBook={(d)=>handleBook(room,d)} />
                 </div>
               </div>
             ))}
-            {rooms.length === 0 && <p style={{textAlign:'center',color:'#aaa',padding:40}}>Loading accommodations...</p>}
+            {rooms.length === 0 && <p style={{textAlign:'center',color:'#aaa',padding:40,gridColumn:'1/-1'}}>Loading accommodations...</p>}
           </div>
           <div style={{textAlign:'center',marginTop:28}}>
             <a href="https://www.airbnb.com/rooms/51519181" target="_blank" rel="noreferrer" className="btn-navy">VIEW ALL ON AIRBNB</a>
