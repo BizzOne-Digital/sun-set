@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import api from '../api';
 import toast from 'react-hot-toast';
 
-// Days in month
 function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
 function firstDay(y, m) { return new Date(y, m, 1).getDay(); }
 function pad(n) { return String(n).padStart(2, '0'); }
@@ -12,9 +11,8 @@ function parseDate(s) { const [y,m,d] = s.split('-').map(Number); return new Dat
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
-export default function AvailabilityChecker({ roomId, pricePerNight, onBook, compact = false }) {
-  const today = new Date();
-  today.setHours(0,0,0,0);
+export default function AvailabilityChecker({ roomId, pricePerNight, onBook, rooms = [] }) {
+  const today = new Date(); today.setHours(0,0,0,0);
 
   const [viewDate, setViewDate] = useState({ y: today.getFullYear(), m: today.getMonth() });
   const [unavailable, setUnavailable] = useState(new Set());
@@ -24,52 +22,50 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook, com
   const [loading, setLoading] = useState(true);
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState(null);
+  const [activeRoomId, setActiveRoomId] = useState(roomId);
 
-  // Fetch unavailable dates from backend
+  // Fetch unavailable dates whenever room changes
   useEffect(() => {
     setLoading(true);
-    api.get('/api/bookings/unavailable-dates', { params: { roomId } })
-      .then(r => {
-        setUnavailable(new Set(r.data.dates));
-      })
+    setCheckin(null); setCheckout(null); setResult(null);
+    api.get('/api/bookings/unavailable-dates', { params: { roomId: activeRoomId } })
+      .then(r => setUnavailable(new Set(r.data.dates)))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [roomId]);
+  }, [activeRoomId]);
 
-  const isUnavailable = (dateStr) => unavailable.has(dateStr);
-  const isPast = (dateStr) => parseDate(dateStr) < today;
-  const isDisabled = (dateStr) => isPast(dateStr) || isUnavailable(dateStr);
+  // If roomId prop changes (parent update), sync it
+  useEffect(() => { if (roomId) setActiveRoomId(roomId); }, [roomId]);
 
-  const inRange = (dateStr) => {
+  const isUnavailable = s => unavailable.has(s);
+  const isPast = s => parseDate(s) < today;
+  const isDisabled = s => isPast(s) || isUnavailable(s);
+
+  const inRange = s => {
     if (!checkin) return false;
     const end = checkout || hovering;
     if (!end) return false;
-    const d = parseDate(dateStr);
-    const s = parseDate(checkin);
-    const e = parseDate(end);
-    return d > s && d < e;
+    const d = parseDate(s), st = parseDate(checkin), en = parseDate(end);
+    return d > st && d < en;
   };
 
-  const handleDayClick = (dateStr) => {
-    if (isDisabled(dateStr)) return;
+  const handleDay = s => {
+    if (isDisabled(s)) return;
     if (!checkin || (checkin && checkout)) {
-      setCheckin(dateStr);
-      setCheckout(null);
-      setResult(null);
+      setCheckin(s); setCheckout(null); setResult(null);
     } else {
-      if (dateStr <= checkin) { setCheckin(dateStr); setCheckout(null); return; }
+      if (s <= checkin) { setCheckin(s); setCheckout(null); return; }
       // Check no blocked dates in range
-      const s = parseDate(checkin);
-      const e = parseDate(dateStr);
-      let d = new Date(s); d.setDate(d.getDate() + 1);
-      while (d < e) {
+      const st = parseDate(checkin), en = parseDate(s);
+      let d = new Date(st); d.setDate(d.getDate() + 1);
+      while (d < en) {
         if (isUnavailable(fmt(d))) {
-          toast.error('Some dates in this range are not available. Please select different dates.');
+          toast.error('Some dates in this range are not available.');
           return;
         }
         d.setDate(d.getDate() + 1);
       }
-      setCheckout(dateStr);
+      setCheckout(s);
     }
   };
 
@@ -77,16 +73,16 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook, com
     if (!checkin || !checkout) return toast.error('Please select check-in and check-out dates');
     setChecking(true);
     try {
-      const r = await api.post('/api/bookings/check-availability', { checkin, checkout, roomId });
+      const r = await api.post('/api/bookings/check-availability', { checkin, checkout, roomId: activeRoomId });
       setResult(r.data);
-    } catch {
-      toast.error('Could not check availability');
-    } finally { setChecking(false); }
+      if (!r.data.available) toast.error('These dates are not available. Please choose different dates.');
+    } catch { toast.error('Could not check availability'); }
+    finally { setChecking(false); }
   };
 
   const nights = (checkin && checkout) ? Math.ceil((parseDate(checkout) - parseDate(checkin)) / 86400000) : 0;
+  const activePricePerNight = rooms.length > 0 ? (rooms.find(r => r._id === activeRoomId)?.pricePerNight || pricePerNight) : pricePerNight;
 
-  // Build calendar
   const { y, m } = viewDate;
   const totalDays = daysInMonth(y, m);
   const startDay = firstDay(y, m);
@@ -97,113 +93,115 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook, com
   const prevMonth = () => setViewDate(v => v.m === 0 ? { y: v.y-1, m: 11 } : { y: v.y, m: v.m-1 });
   const nextMonth = () => setViewDate(v => v.m === 11 ? { y: v.y+1, m: 0 } : { y: v.y, m: v.m+1 });
 
-  const s = { // styles
-    wrap:       { fontFamily:"'Poppins',sans-serif", border:'1px solid #E8E0D0', borderRadius:6, overflow:'hidden', background:'#fff', boxShadow:'0 4px 20px rgba(0,0,0,0.08)' },
-    header:     { background:'#1A2540', padding:'14px 16px', display:'flex', justifyContent:'space-between', alignItems:'center' },
-    headerTxt:  { color:'#fff', fontWeight:600, fontSize:14 },
-    navBtn:     { background:'none', border:'1px solid rgba(255,255,255,0.3)', color:'#fff', width:28, height:28, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:4, transition:'all 0.2s' },
-    dayNames:   { display:'grid', gridTemplateColumns:'repeat(7,1fr)', background:'#F9F5EE', borderBottom:'1px solid #E8E0D0' },
-    dayName:    { textAlign:'center', fontSize:11, fontWeight:600, color:'#888', padding:'8px 0' },
-    grid:       { display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:1, background:'#E8E0D0', padding:1 },
-  };
-
-  const getDayStyle = (dateStr) => {
-    const base = { textAlign:'center', padding:'8px 4px', fontSize:13, cursor:'pointer', background:'#fff', transition:'all 0.15s', position:'relative', userSelect:'none' };
-    if (!dateStr) return { ...base, cursor:'default', background:'#FAFAF8' };
-    if (isPast(dateStr)) return { ...base, color:'#ccc', cursor:'not-allowed', background:'#FAFAF8' };
-    if (isUnavailable(dateStr)) return { ...base, background:'#FFF0F0', color:'#EE8888', cursor:'not-allowed', textDecoration:'line-through' };
-    if (dateStr === checkin) return { ...base, background:'#1A2540', color:'#fff', fontWeight:700 };
-    if (dateStr === checkout) return { ...base, background:'#C9933A', color:'#fff', fontWeight:700 };
-    if (inRange(dateStr)) return { ...base, background:'rgba(201,147,58,0.12)', color:'#1A2540' };
+  const getDayStyle = s => {
+    const base = { textAlign:'center', padding:'7px 2px', fontSize:13, cursor:'pointer', background:'#fff', transition:'all 0.15s', userSelect:'none', borderRadius:4 };
+    if (!s) return { ...base, cursor:'default', background:'transparent' };
+    if (isPast(s)) return { ...base, color:'#ccc', cursor:'not-allowed' };
+    if (isUnavailable(s)) return { ...base, background:'#FFF0F0', color:'#EE8888', cursor:'not-allowed', textDecoration:'line-through', borderRadius:4 };
+    if (s === checkin) return { ...base, background:'#1A2540', color:'#fff', fontWeight:700, borderRadius:4 };
+    if (s === checkout) return { ...base, background:'#C9933A', color:'#fff', fontWeight:700, borderRadius:4 };
+    if (inRange(s)) return { ...base, background:'rgba(201,147,58,0.15)', color:'#1A2540' };
     return { ...base, color:'#333' };
   };
 
   return (
-    <div>
-      <div style={s.wrap}>
-        {/* Legend */}
-        <div style={{ display:'flex', gap:16, padding:'10px 14px', background:'#F9F5EE', borderBottom:'1px solid #E8E0D0', flexWrap:'wrap' }}>
-          {[['#1A2540','#fff','Check-in'],['#C9933A','#fff','Check-out'],['rgba(201,147,58,0.15)','#333','Selected Range'],['#FFF0F0','#EE8888','Unavailable / Booked']].map(([bg,c,l]) => (
-            <div key={l} style={{ display:'flex', alignItems:'center', gap:5 }}>
-              <div style={{ width:14, height:14, background:bg, borderRadius:2, border:'1px solid rgba(0,0,0,0.1)' }}/>
-              <span style={{ fontSize:11, color:'#777' }}>{l}</span>
-            </div>
+    <div style={{ fontFamily:"'Poppins',sans-serif", border:'1px solid #E8E0D0', borderRadius:6, overflow:'hidden', background:'#fff', boxShadow:'0 4px 20px rgba(0,0,0,0.08)' }}>
+
+      {/* Room selector — only show if multiple rooms passed */}
+      {rooms.length > 1 && (
+        <div style={{ padding:'10px 14px', background:'#F9F5EE', borderBottom:'1px solid #E8E0D0', display:'flex', gap:8 }}>
+          {rooms.map(r => (
+            <button key={r._id} onClick={() => setActiveRoomId(r._id)}
+              style={{ flex:1, padding:'7px 10px', border:`1px solid ${activeRoomId===r._id?'#C9933A':'#E0D8CC'}`, background:activeRoomId===r._id?'#C9933A':'#fff', color:activeRoomId===r._id?'#fff':'#555', fontSize:11, fontWeight:600, cursor:'pointer', borderRadius:4, transition:'all 0.2s', fontFamily:"'Poppins',sans-serif" }}>
+              {r.name}
+            </button>
           ))}
         </div>
+      )}
 
-        {/* Calendar header */}
-        <div style={s.header}>
-          <button style={s.navBtn} onClick={prevMonth}>
-            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg>
-          </button>
-          <span style={s.headerTxt}>{MONTHS[m]} {y}</span>
-          <button style={s.navBtn} onClick={nextMonth}>
-            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
-          </button>
+      {/* Legend */}
+      <div style={{ display:'flex', gap:14, padding:'8px 14px', background:'#F9F5EE', borderBottom:'1px solid #E8E0D0', flexWrap:'wrap' }}>
+        {[['#1A2540','Check-in'],['#C9933A','Check-out'],['rgba(201,147,58,0.15)','Selected'],['#FFF0F0','Unavailable']].map(([bg,l]) => (
+          <div key={l} style={{ display:'flex', alignItems:'center', gap:4 }}>
+            <div style={{ width:12, height:12, background:bg, borderRadius:2, border:'1px solid rgba(0,0,0,0.08)' }}/>
+            <span style={{ fontSize:10, color:'#777' }}>{l}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Calendar header */}
+      <div style={{ background:'#1A2540', padding:'12px 16px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        <button onClick={prevMonth} style={{ background:'none', border:'1px solid rgba(255,255,255,0.3)', color:'#fff', width:28, height:28, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:4 }}>
+          <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg>
+        </button>
+        <span style={{ color:'#fff', fontWeight:600, fontSize:14 }}>{MONTHS[m]} {y}</span>
+        <button onClick={nextMonth} style={{ background:'none', border:'1px solid rgba(255,255,255,0.3)', color:'#fff', width:28, height:28, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:4 }}>
+          <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
+        </button>
+      </div>
+
+      {/* Day names */}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', background:'#F9F5EE', borderBottom:'1px solid #E8E0D0' }}>
+        {DAYS.map(d => <div key={d} style={{ textAlign:'center', fontSize:10, fontWeight:600, color:'#888', padding:'7px 0' }}>{d}</div>)}
+      </div>
+
+      {/* Grid */}
+      {loading
+        ? <div style={{ padding:32, textAlign:'center', color:'#C9933A', fontSize:13 }}>Loading availability...</div>
+        : <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:2, padding:'6px' }}>
+            {cells.map((day, i) => {
+              const dateStr = day ? `${y}-${pad(m+1)}-${pad(day)}` : null;
+              return (
+                <div key={i} style={getDayStyle(dateStr)}
+                  onClick={() => dateStr && handleDay(dateStr)}
+                  onMouseEnter={() => { if (dateStr && checkin && !checkout && !isDisabled(dateStr)) setHovering(dateStr); }}
+                  onMouseLeave={() => setHovering(null)}>
+                  {day || ''}
+                </div>
+              );
+            })}
+          </div>
+      }
+
+      {/* Summary + Actions */}
+      <div style={{ padding:'12px 14px', background:'#F9F5EE', borderTop:'1px solid #E8E0D0' }}>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:10 }}>
+          <div>
+            <div style={{ fontSize:10, fontWeight:600, color:'#888', textTransform:'uppercase', marginBottom:3 }}>Check-in</div>
+            <div style={{ fontSize:13, fontWeight:600, color: checkin ? '#1A2540' : '#bbb' }}>{checkin || 'Select date'}</div>
+          </div>
+          <div>
+            <div style={{ fontSize:10, fontWeight:600, color:'#888', textTransform:'uppercase', marginBottom:3 }}>Check-out</div>
+            <div style={{ fontSize:13, fontWeight:600, color: checkout ? '#1A2540' : '#bbb' }}>{checkout || 'Select date'}</div>
+          </div>
         </div>
 
-        {/* Day names */}
-        <div style={s.dayNames}>{DAYS.map(d => <div key={d} style={s.dayName}>{d}</div>)}</div>
-
-        {/* Calendar grid */}
-        {loading
-          ? <div style={{ padding:40, textAlign:'center', color:'#C9933A', fontSize:14 }}>Loading availability...</div>
-          : <div style={s.grid}>
-              {cells.map((day, i) => {
-                const dateStr = day ? `${y}-${pad(m+1)}-${pad(day)}` : null;
-                return (
-                  <div key={i} style={getDayStyle(dateStr)}
-                    onClick={() => dateStr && handleDayClick(dateStr)}
-                    onMouseEnter={() => { if(dateStr && checkin && !checkout && !isPast(dateStr) && !isUnavailable(dateStr)) setHovering(dateStr); }}
-                    onMouseLeave={() => setHovering(null)}
-                  >
-                    {day || ''}
-                  </div>
-                );
-              })}
-            </div>
-        }
-
-        {/* Selection summary */}
-        <div style={{ padding:'14px 16px', background:'#F9F5EE', borderTop:'1px solid #E8E0D0' }}>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:12 }}>
-            <div>
-              <div style={{ fontSize:10, fontWeight:600, color:'#888', letterSpacing:'0.05em', textTransform:'uppercase', marginBottom:3 }}>Check-in</div>
-              <div style={{ fontSize:14, fontWeight:600, color: checkin ? '#1A2540' : '#bbb' }}>{checkin || 'Select date'}</div>
-            </div>
-            <div>
-              <div style={{ fontSize:10, fontWeight:600, color:'#888', letterSpacing:'0.05em', textTransform:'uppercase', marginBottom:3 }}>Check-out</div>
-              <div style={{ fontSize:14, fontWeight:600, color: checkout ? '#1A2540' : '#bbb' }}>{checkout || 'Select date'}</div>
-            </div>
+        {nights > 0 && activePricePerNight && (
+          <div style={{ background:'rgba(201,147,58,0.08)', border:'1px solid rgba(201,147,58,0.2)', padding:'7px 10px', marginBottom:8, borderRadius:4, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+            <span style={{ fontSize:12, color:'#555' }}>{nights} night{nights>1?'s':''} × ${activePricePerNight}</span>
+            <span style={{ fontSize:14, fontWeight:700, color:'#1A2540' }}>${(nights * activePricePerNight).toLocaleString()}</span>
           </div>
+        )}
 
-          {nights > 0 && pricePerNight && (
-            <div style={{ background:'rgba(201,147,58,0.08)', border:'1px solid rgba(201,147,58,0.2)', padding:'8px 12px', marginBottom:10, borderRadius:4, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-              <span style={{ fontSize:13, color:'#555' }}>{nights} night{nights>1?'s':''} × ${pricePerNight}/night</span>
-              <span style={{ fontSize:15, fontWeight:700, color:'#1A2540' }}>${(nights * pricePerNight).toLocaleString()}</span>
-            </div>
-          )}
+        {result && (
+          <div style={{ marginBottom:8, padding:'7px 10px', borderRadius:4, background: result.available ? '#EAF3DE' : '#FCEBEB', border:`1px solid ${result.available ? '#C5E1A5' : '#FFCCCC'}` }}>
+            <p style={{ fontSize:12, fontWeight:600, color: result.available ? '#2E7D32' : '#C62828' }}>
+              {result.available ? `✓ Available for ${nights} nights!` : '✗ These dates are already booked'}
+            </p>
+          </div>
+        )}
 
-          {result && (
-            <div style={{ marginBottom:10, padding:'8px 12px', borderRadius:4, background: result.available ? '#EAF3DE' : '#FCEBEB', border:`1px solid ${result.available ? '#C5E1A5' : '#FFCCCC'}` }}>
-              <p style={{ fontSize:13, fontWeight:600, color: result.available ? '#2E7D32' : '#C62828' }}>
-                {result.available ? `✓ Available! ${nights} nights` : '✗ ' + result.conflict}
-              </p>
-            </div>
-          )}
-
-          <div style={{ display:'flex', gap:8 }}>
-            <button onClick={checkAvailability} disabled={!checkin || !checkout || checking}
-              style={{ flex:1, background:'#1A2540', color:'#fff', border:'none', padding:'11px', fontSize:12, fontWeight:600, cursor:(!checkin||!checkout||checking)?'not-allowed':'pointer', opacity:(!checkin||!checkout)?0.5:1, transition:'all 0.2s', letterSpacing:'0.05em' }}>
-              {checking ? 'Checking...' : 'CHECK AVAILABILITY'}
+        <div style={{ display:'flex', gap:8 }}>
+          <button onClick={checkAvailability} disabled={!checkin || !checkout || checking}
+            style={{ flex:1, background:'#1A2540', color:'#fff', border:'none', padding:'10px', fontSize:11, fontWeight:600, cursor:(!checkin||!checkout||checking)?'not-allowed':'pointer', opacity:(!checkin||!checkout)?0.5:1, letterSpacing:'0.05em', fontFamily:"'Poppins',sans-serif", borderRadius:4 }}>
+            {checking ? 'Checking...' : 'CHECK AVAILABILITY'}
+          </button>
+          {result?.available && (
+            <button onClick={() => onBook && onBook({ checkin, checkout, nights, total: nights * (activePricePerNight||0) })}
+              style={{ flex:1, background:'#C9933A', color:'#fff', border:'none', padding:'10px', fontSize:11, fontWeight:600, cursor:'pointer', letterSpacing:'0.05em', fontFamily:"'Poppins',sans-serif", borderRadius:4 }}>
+              BOOK NOW
             </button>
-            {result?.available && (
-              <button onClick={() => onBook && onBook({ checkin, checkout, nights, total: nights * (pricePerNight||0) })}
-                style={{ flex:1, background:'#C9933A', color:'#fff', border:'none', padding:'11px', fontSize:12, fontWeight:600, cursor:'pointer', transition:'all 0.2s', letterSpacing:'0.05em' }}>
-                BOOK NOW
-              </button>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </div>
