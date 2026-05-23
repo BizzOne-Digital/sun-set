@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import api from '../api';
 import toast from 'react-hot-toast';
 
@@ -23,22 +23,25 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook }) {
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState(null);
 
+  // Fetch on mount / roomId change — resets selection
   useEffect(() => {
     setLoading(true);
-    setCheckin(null); setCheckout(null); setResult(null);
+    setCheckin(null);
+    setCheckout(null);
+    setResult(null);
     api.get('/api/bookings/unavailable-dates', { params: { roomId } })
       .then(r => setUnavailable(new Set(r.data.dates)))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [roomId]);
 
-  // Auto-refresh every 30 seconds to catch admin blocks
+  // Silent background refresh every 60s — does NOT reset selection
   useEffect(() => {
     const interval = setInterval(() => {
-      api.get("/api/bookings/unavailable-dates", { params: { roomId } })
+      api.get('/api/bookings/unavailable-dates', { params: { roomId } })
         .then(r => setUnavailable(new Set(r.data.dates)))
         .catch(() => {});
-    }, 30000);
+    }, 60000);
     return () => clearInterval(interval);
   }, [roomId]);
 
@@ -74,7 +77,7 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook }) {
   };
 
   const checkAvailability = async () => {
-    if (!checkin || !checkout) return toast.error('Please select check-in and check-out dates');
+    if (!checkin || !checkout) return toast.error('Select check-in and check-out dates');
     setChecking(true);
     try {
       const r = await api.post('/api/bookings/check-availability', { checkin, checkout, roomId });
@@ -84,7 +87,6 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook }) {
   };
 
   const nights = (checkin && checkout) ? Math.ceil((parseDate(checkout) - parseDate(checkin)) / 86400000) : 0;
-
   const { y, m } = viewDate;
   const cells = [];
   for (let i = 0; i < firstDay(y, m); i++) cells.push(null);
@@ -106,17 +108,15 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook }) {
 
   return (
     <div style={{ fontFamily:"'Poppins',sans-serif", border:'1px solid #E8E0D0', borderRadius:6, overflow:'hidden', background:'#fff', boxShadow:'0 4px 20px rgba(0,0,0,0.08)' }}>
-
       {/* Legend */}
       <div style={{ display:'flex', gap:12, padding:'8px 14px', background:'#F9F5EE', borderBottom:'1px solid #E8E0D0', flexWrap:'wrap' }}>
-        {[['#1A2540','#fff','Check-in'],['#C9933A','#fff','Check-out'],['rgba(201,147,58,0.15)','#333','Selected'],['#FFF0F0','#EE8888','Unavailable']].map(([bg,c,l]) => (
+        {[['#1A2540','Check-in'],['#C9933A','Check-out'],['rgba(201,147,58,0.15)','Selected'],['#FFF0F0','Unavailable']].map(([bg,l]) => (
           <div key={l} style={{ display:'flex', alignItems:'center', gap:4 }}>
             <div style={{ width:12, height:12, background:bg, borderRadius:2, border:'1px solid rgba(0,0,0,0.08)' }}/>
             <span style={{ fontSize:10, color:'#777' }}>{l}</span>
           </div>
         ))}
       </div>
-
       {/* Header */}
       <div style={{ background:'#1A2540', padding:'12px 16px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
         <button onClick={prevMonth} style={{ background:'none', border:'1px solid rgba(255,255,255,0.3)', color:'#fff', width:28, height:28, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:4 }}>
@@ -127,12 +127,10 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook }) {
           <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
         </button>
       </div>
-
       {/* Day names */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', background:'#F9F5EE', borderBottom:'1px solid #E8E0D0' }}>
         {DAYS.map(d => <div key={d} style={{ textAlign:'center', fontSize:10, fontWeight:600, color:'#888', padding:'7px 0' }}>{d}</div>)}
       </div>
-
       {/* Grid */}
       {loading
         ? <div style={{ padding:28, textAlign:'center', color:'#C9933A', fontSize:13 }}>Loading availability...</div>
@@ -150,7 +148,6 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook }) {
             })}
           </div>
       }
-
       {/* Footer */}
       <div style={{ padding:'12px 14px', background:'#F9F5EE', borderTop:'1px solid #E8E0D0' }}>
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:10 }}>
@@ -163,14 +160,12 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook }) {
             <div style={{ fontSize:13, fontWeight:600, color: checkout ? '#1A2540' : '#bbb' }}>{checkout || 'Select date'}</div>
           </div>
         </div>
-
         {nights > 0 && pricePerNight && (
           <div style={{ background:'rgba(201,147,58,0.08)', border:'1px solid rgba(201,147,58,0.2)', padding:'7px 10px', marginBottom:8, borderRadius:4, display:'flex', justifyContent:'space-between' }}>
             <span style={{ fontSize:12, color:'#555' }}>{nights} night{nights>1?'s':''} × ${pricePerNight}</span>
             <span style={{ fontSize:14, fontWeight:700, color:'#1A2540' }}>${(nights * pricePerNight).toLocaleString()}</span>
           </div>
         )}
-
         {result && (
           <div style={{ marginBottom:8, padding:'7px 10px', borderRadius:4, background: result.available ? '#EAF3DE' : '#FCEBEB', border:`1px solid ${result.available ? '#C5E1A5' : '#FFCCCC'}` }}>
             <p style={{ fontSize:12, fontWeight:600, color: result.available ? '#2E7D32' : '#C62828' }}>
@@ -178,7 +173,6 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook }) {
             </p>
           </div>
         )}
-
         <div style={{ display:'flex', gap:8 }}>
           <button onClick={checkAvailability} disabled={!checkin || !checkout || checking}
             style={{ flex:1, background:'#1A2540', color:'#fff', border:'none', padding:'10px', fontSize:11, fontWeight:600, cursor:(!checkin||!checkout||checking)?'not-allowed':'pointer', opacity:(!checkin||!checkout)?0.5:1, letterSpacing:'0.05em', fontFamily:"'Poppins',sans-serif", borderRadius:4 }}>
