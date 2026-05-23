@@ -20,7 +20,7 @@ const FEATURES = [
 ];
 
 const THINGS = [
-  { img:'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&q=75', title:"Dunn's River Falls", desc:'Climb the world-famous waterfalls' },
+  { img:'https://i.postimg.cc/W3rZB8VZ/image.png', title:"Dunn's River Falls", desc:'Climb the world-famous waterfalls' },
   { img:'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=300&q=75', title:'Blue Hole', desc:'Swim & explore natural pools' },
   { img:'https://images.unsplash.com/photo-1518623489648-a173ef7824f3?w=300&q=75', title:'Mystic Mountain', desc:'Bobsled, zipline & views' },
   { img:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=300&q=75', title:'Snorkeling', desc:'Explore coral reefs' },
