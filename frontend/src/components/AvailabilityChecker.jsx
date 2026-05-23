@@ -32,6 +32,16 @@ export default function AvailabilityChecker({ roomId, pricePerNight, onBook }) {
       .finally(() => setLoading(false));
   }, [roomId]);
 
+  // Auto-refresh every 30 seconds to catch admin blocks
+  useEffect(() => {
+    const interval = setInterval(() => {
+      api.get("/api/bookings/unavailable-dates", { params: { roomId } })
+        .then(r => setUnavailable(new Set(r.data.dates)))
+        .catch(() => {});
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [roomId]);
+
   const isUnavailable = s => unavailable.has(s);
   const isPast = s => parseDate(s) < today;
   const isDisabled = s => isPast(s) || isUnavailable(s);
