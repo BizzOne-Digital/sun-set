@@ -1,22 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600&family=Dancing+Script:wght@600&display=swap');
 
 :root {
-  --gold: #C9933A;
-  --gold-light: #E8B96A;
-  --navy: #1A2540;
-  --navy-dark: #0E1729;
-  --cream: #FDF8F0;
-  --white: #FFFFFF;
-  --text: #2C2C2C;
-  --text-mid: #555;
-  --text-light: #888;
+  --gold: #C9933A; --gold-light: #E8B96A;
+  --navy: #1A2540; --navy-dark: #0E1729;
+  --cream: #FDF8F0; --white: #FFFFFF;
+  --text: #2C2C2C; --text-mid: #555; --text-light: #888;
   --border: #E8E0D0;
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-sans: 'Poppins', sans-serif;
   --font-script: 'Dancing Script', cursive;
-  --radius: 4px;
-  --shadow: 0 4px 20px rgba(0,0,0,0.08);
-  --shadow-lg: 0 16px 48px rgba(0,0,0,0.14);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,34 +21,91 @@ button { font-family: var(--font-sans); }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 .section-pad { padding: 80px 0; }
 
-/* Buttons */
 .btn-gold { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: #fff; padding: 12px 28px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.25s; letter-spacing: 0.05em; text-decoration: none; }
-.btn-gold:hover { background: #b8821f; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,147,58,0.35); }
+.btn-gold:hover { background: #b8821f; transform: translateY(-2px); }
 .btn-navy { display: inline-flex; align-items: center; gap: 8px; background: var(--navy); color: #fff; padding: 12px 28px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.25s; text-decoration: none; }
 .btn-navy:hover { background: #0e1729; }
 .btn-outline-gold { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--gold); padding: 11px 26px; font-size: 13px; font-weight: 600; border: 2px solid var(--gold); cursor: pointer; transition: all 0.25s; text-decoration: none; }
 .btn-outline-gold:hover { background: var(--gold); color: #fff; }
 .btn-outline-white { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #fff; padding: 11px 26px; font-size: 13px; font-weight: 500; border: 2px solid rgba(255,255,255,0.7); cursor: pointer; transition: all 0.25s; text-decoration: none; }
-.btn-outline-white:hover { background: rgba(255,255,255,0.12); border-color: #fff; }
+.btn-outline-white:hover { background: rgba(255,255,255,0.12); }
 
-/* Typography */
-.section-title { font-family: var(--font-serif); font-size: clamp(26px, 3.5vw, 40px); color: var(--navy); font-weight: 700; }
+.section-title { font-family: var(--font-serif); font-size: clamp(24px, 3.5vw, 40px); color: var(--navy); font-weight: 700; }
 .section-label { font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); }
 .gold-divider { width: 50px; height: 3px; background: var(--gold); margin: 12px 0; }
 .gold-divider.center { margin: 12px auto; }
 
-/* Form inputs */
-.form-input { width: 100%; padding: 11px 14px; border: 1px solid var(--border); font-family: var(--font-sans); font-size: 13px; outline: none; transition: border 0.2s; background: #fff; color: var(--text); border-radius: var(--radius); }
+.form-input { width: 100%; padding: 11px 14px; border: 1px solid var(--border); font-family: var(--font-sans); font-size: 13px; outline: none; transition: border 0.2s; background: #fff; color: var(--text); border-radius: 4px; }
 .form-input:focus { border-color: var(--gold); }
-.form-label { display: block; font-size: 11px; font-weight: 600; color: var(--text-mid); margin-bottom: 5px; letter-spacing: 0.05em; text-transform: uppercase; }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
 
-/* Page transition */
-.page-enter { animation: fadeUp 0.5s ease both; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+/* ── RESPONSIVE ─────────────────────────────── */
 
-/* Admin */
-.admin-body { background: #F5F3EE; min-height: 100vh; }
+/* Tablet */
+@media (max-width: 1024px) {
+  .section-pad { padding: 60px 0; }
+  .container { padding: 0 16px; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .section-pad { padding: 48px 0; }
+  .container { padding: 0 14px; }
+  .section-title { font-size: 26px; }
+
+  /* Hero */
+  .hero-grid { grid-template-columns: 1fr !important; }
+  .hero-calendar { display: none !important; }
+  .hero-right-img { display: none !important; }
+  .hero-section { min-height: 70vh !important; }
+  .hero-content { padding: 60px 14px 40px !important; }
+
+  /* Accommodations */
+  .rooms-grid { grid-template-columns: 1fr !important; }
+
+  /* Services dark section */
+  .services-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .services-logo { display: none !important; }
+
+  /* Things to do */
+  .things-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .things-viewall { display: none !important; }
+
+  /* Reviews + Instagram + QR */
+  .bottom-grid { grid-template-columns: 1fr !important; gap: 36px !important; }
+
+  /* Footer */
+  .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }
+
+  /* Accommodations page */
+  .accom-grid { grid-template-columns: 1fr !important; }
+
+  /* About, Services, Manage */
+  .two-col { grid-template-columns: 1fr !important; gap: 28px !important; }
+  .four-col { grid-template-columns: 1fr 1fr !important; gap: 20px !important; }
+
+  /* Gallery */
+  .gallery-cols { columns: 2 100px !important; }
+
+  /* Attractions */
+  .attractions-grid { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Buttons */
+  .btn-gold, .btn-navy, .btn-outline-gold, .btn-outline-white { padding: 11px 20px; font-size: 12px; }
+
+  /* Manage page steps */
+  .steps-grid { grid-template-columns: 1fr 1fr !important; gap: 20px !important; }
+
+  /* Form grids */
+  .form-two-col { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 480px) {
+  .things-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .footer-grid { grid-template-columns: 1fr !important; }
+  .four-col { grid-template-columns: 1fr !important; }
+  .steps-grid { grid-template-columns: 1fr !important; }
+  .attractions-grid { grid-template-columns: 1fr !important; }
+}
