@@ -56,10 +56,10 @@ export default function AboutPage() {
             {/* Photo grid */}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
               {[
-                'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=400&q=80',
-                'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&q=80',
-                'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&q=80',
-                'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=400&q=80',
+                '/property-exterior2.jpg',
+                '/property-gate.jpg',
+                '/property-night.jpg',
+                '/property-building.jpg',
               ].map((src, i) => (
                 <div key={i} style={{ paddingBottom:'100%', position:'relative', overflow:'hidden', borderRadius:6 }}>
                   <img src={src} alt="" loading="lazy" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', transition:'transform 0.5s' }}
