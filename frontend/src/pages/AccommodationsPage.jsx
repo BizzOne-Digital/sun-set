@@ -21,7 +21,7 @@ export default function AccommodationsPage() {
         <div className="container" style={{position:'relative',zIndex:1}}>
           <p className="section-label">Stay With Us</p>
           <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:'clamp(28px,5vw,52px)',fontWeight:700,color:'#fff',marginTop:10}}>Our Accommodations</h1>
-          <p style={{fontSize:14,color:'rgba(255,255,255,0.7)',marginTop:10}}>Luxury 1 & 2 bedroom suites in Ocho Rios, Jamaica</p>
+          <p style={{fontSize:14,color:'rgba(255,255,255,0.7)',marginTop:10}}>Comfortable 1 & 2 bedroom suites in Tower Isle, near Ocho Rios, Jamaica</p>
         </div>
       </div>
       <section className="section-pad">

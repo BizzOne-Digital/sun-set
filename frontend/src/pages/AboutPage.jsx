@@ -38,15 +38,15 @@ export default function AboutPage() {
             <div>
               <p className="section-label">Who We Are</p>
               <div className="gold-divider"/>
-              <h2 className="section-title" style={{ marginBottom:20 }}>A Luxury Retreat in the Heart of Ocho Rios</h2>
+              <h2 className="section-title" style={{ marginBottom:20 }}>A Peaceful Tropical Retreat Near Ocho Rios</h2>
               <p style={{ fontSize:14, color:'#555', lineHeight:1.85, marginBottom:16 }}>
-                Sunset Retreat JA is a premier luxury vacation rental located at 119 Riviera Blvd, Ocho Rios, Jamaica. We offer beautifully appointed 1 and 2-bedroom suites that combine modern comfort with the natural beauty of Jamaica.
+                Sunset Retreat JA is a comfortable vacation rental located in the peaceful Tower Isle area, just outside Ocho Rios, Jamaica. We offer well-appointed 1 and 2-bedroom suites that combine modern comfort with the natural beauty of the Caribbean.
               </p>
               <p style={{ fontSize:14, color:'#555', lineHeight:1.85, marginBottom:16 }}>
-                Our property is designed to give you the perfect balance of privacy, luxury, and access to everything Ocho Rios has to offer — from world-famous Dunn's River Falls to pristine beaches just minutes away.
+                Located in a quiet residential area, our property gives you the perfect balance of privacy, relaxation, and easy access to everything the north coast has to offer — from world-famous Dunn's River Falls to pristine beaches just a short drive away.
               </p>
               <p style={{ fontSize:14, color:'#555', lineHeight:1.85, marginBottom:28 }}>
-                Whether you're a couple seeking a romantic escape or a family looking for a comfortable base to explore Jamaica, Sunset Retreat JA is your perfect home away from home.
+                Whether you're a couple seeking a romantic escape, a solo traveler wanting to unwind, or a small family looking for a comfortable base to explore Jamaica, Sunset Retreat JA is your home away from home.
               </p>
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
                 <Link to="/accommodations" className="btn-gold">View Rooms</Link>
@@ -114,9 +114,9 @@ export default function AboutPage() {
             <div>
               <p className="section-label">Find Us</p>
               <div className="gold-divider"/>
-              <h2 className="section-title" style={{ marginBottom:16 }}>Prime Location in Ocho Rios</h2>
+              <h2 className="section-title" style={{ marginBottom:16 }}>Located in Tower Isle, Near Ocho Rios</h2>
               <p style={{ fontSize:14, color:'#555', lineHeight:1.8, marginBottom:24 }}>
-                Perfectly situated at 119 Riviera Blvd, we are minutes away from Jamaica's most famous attractions, beaches, restaurants, and entertainment.
+                Located in the peaceful Tower Isle area, just outside Ocho Rios, we are a short drive from Jamaica's most popular attractions, beaches, restaurants, and entertainment. Airport transfer assistance is available upon request.
               </p>
               {[
                 ['Dunn\'s River Falls', '5 min drive'],

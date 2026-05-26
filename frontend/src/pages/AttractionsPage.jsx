@@ -3,14 +3,14 @@ import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
 
 const ATTRACTIONS = [
-  {img:'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80',title:"Dunn's River Falls",dist:'5 min drive',desc:'One of Jamaica\'s most iconic natural attractions. Climb the terraced waterfalls or simply enjoy the breathtaking scenery.',tags:['Nature','Adventure','Swimming']},
-  {img:'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=600&q=80',title:'Blue Hole Secret Falls',dist:'20 min drive',desc:'A hidden gem featuring stunning natural pools and waterfalls where you can swim, jump, and rope swing.',tags:['Nature','Swimming','Adventure']},
-  {img:'https://images.unsplash.com/photo-1518623489648-a173ef7824f3?w=600&q=80',title:'Mystic Mountain',dist:'10 min drive',desc:'Enjoy the famous bobsled ride, zipline through the rainforest canopy, and take in panoramic views of Ocho Rios.',tags:['Adventure','Views','Family']},
-  {img:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80',title:'Snorkeling & Diving',dist:'15 min drive',desc:'Explore the vibrant coral reefs and rich marine life of the Caribbean Sea with professional guides.',tags:['Water Sports','Nature']},
-  {img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80',title:'River Tubing',dist:'25 min drive',desc:'Float down a scenic river on an inner tube, surrounded by lush tropical vegetation.',tags:['Nature','Relaxation']},
-  {img:'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=600&q=80',title:'Beach Day',dist:'5 min drive',desc:'Relax on the beautiful white sand beaches of Ocho Rios, swim in the crystal clear Caribbean water.',tags:['Beach','Relaxation','Swimming']},
-  {img:'https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?w=600&q=80',title:'Island Village',dist:'5 min drive',desc:'A vibrant entertainment complex with shopping, dining, beach, casino, and live music.',tags:['Shopping','Dining','Entertainment']},
-  {img:'https://images.unsplash.com/photo-1502982720700-bfff97f2ecac?w=600&q=80',title:'Shaw Park Gardens',dist:'8 min drive',desc:'Beautiful botanical gardens with cascading waterfalls, exotic plants, and stunning views.',tags:['Nature','Photography']},
+  {img:'https://images.unsplash.com/photo-1558031096-21eb8c643d39?q=80',title:"Dunn's River Falls",dist:'5 min drive',desc:'One of Jamaica\'s most iconic natural attractions. Climb the terraced waterfalls or simply enjoy the breathtaking scenery.',tags:['Nature','Adventure','Swimming']},
+  {img:'https://images.unsplash.com/photo-1758812775438-5e0d7325088b?q=80',title:'Blue Hole Secret Falls',dist:'20 min drive',desc:'A hidden gem featuring stunning natural pools and waterfalls where you can swim, jump, and rope swing.',tags:['Nature','Swimming','Adventure']},
+  {img:'https://images.unsplash.com/photo-1466854076813-4aa9ac0fc347?q=80',title:'Mystic Mountain',dist:'10 min drive',desc:'Enjoy the famous bobsled ride, zipline through the rainforest canopy, and take in panoramic views of Ocho Rios.',tags:['Adventure','Views','Family']},
+  {img:'https://images.unsplash.com/photo-1664922114319-4700c0ef74b1?q=80',title:'Snorkeling & Diving',dist:'15 min drive',desc:'Explore the vibrant coral reefs and rich marine life of the Caribbean Sea with professional guides.',tags:['Water Sports','Nature']},
+  {img:'https://images.unsplash.com/photo-1562701193-2c694bd0fe15?q=80',title:'River Tubing',dist:'25 min drive',desc:'Float down a scenic river on an inner tube, surrounded by lush tropical vegetation.',tags:['Nature','Relaxation']},
+  {img:'https://images.unsplash.com/photo-1536869338989-e7ffd2297454?q=80',title:'Beach Day',dist:'5 min drive',desc:'Relax on the beautiful white sand beaches of Ocho Rios, swim in the crystal clear Caribbean water.',tags:['Beach','Relaxation','Swimming']},
+  {img:'https://images.unsplash.com/photo-1712960258915-7ab4eb27d24f?q=80',title:'Island Village',dist:'5 min drive',desc:'A vibrant entertainment complex with shopping, dining, beach, casino, and live music.',tags:['Shopping','Dining','Entertainment']},
+  {img:'https://images.unsplash.com/photo-1554663565-f60b88adfa08?q=80',title:'Shaw Park Gardens',dist:'8 min drive',desc:'Beautiful botanical gardens with cascading waterfalls, exotic plants, and stunning views.',tags:['Nature','Photography']},
 ];
 
 export default function AttractionsPage() {
