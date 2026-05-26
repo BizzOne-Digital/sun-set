@@ -273,7 +273,33 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
+  {/* JAMAICAN FOOD & CULTURE */}
+      <section className="section-pad" style={{background:'#FDF8F0'}}>
+        <div className="container">
+          <div style={{textAlign:'center',marginBottom:32}}>
+            <p className="section-label">Taste Jamaica</p>
+            <div className="gold-divider center"/>
+            <h2 className="section-title">Local Food & Culture</h2>
+            <p style={{fontSize:14,color:'#777',marginTop:12,maxWidth:520,margin:'12px auto 0'}}>Experience the rich flavours and vibrant culture of Jamaica's north coast — from jerk chicken to Blue Mountain coffee.</p>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:14}} className="food-grid">
+            {[
+              {img:'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?q=80',title:'Ackee & Saltfish'},
+              {img:'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80',title:'Jerk Chicken'},
+              {img:'https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80',title:'Fresh Tropical Fruit'},
+              {img:'https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80',title:'Blue Mountain Coffee'},
+              {img:'https://images.unsplash.com/photo-1559847844-5315695dadae?q=80',title:'Escovitch Fish'},
+            ].map(item=>(
+              <div key={item.title}>
+                <div style={{paddingBottom:'100%',position:'relative',overflow:'hidden',borderRadius:6}}>
+                  <img src={item.img} alt={item.title} loading="lazy" style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',transition:'transform 0.5s'}} onMouseEnter={e=>e.target.style.transform='scale(1.07)'} onMouseLeave={e=>e.target.style.transform='scale(1)'}/>
+                </div>
+                <p style={{fontFamily:"'Playfair Display',serif",fontSize:12,fontWeight:700,color:'#1A2540',marginTop:8,textAlign:'center'}}>{item.title}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* PERFECT FOR + WHY GUESTS LOVE IT */}
       <section className="section-pad" style={{background:'#fff'}}>

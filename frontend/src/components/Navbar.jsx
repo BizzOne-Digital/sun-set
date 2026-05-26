@@ -83,19 +83,11 @@ export default function Navbar() {
             >
               📍
               <span className="topbar-address">
-                119 Riviera Blvd, Ocho Rios, Jamaica
+                Tower Isle, St. Mary, Jamaica | Near Ocho Rios
               </span>
             </span>
 
-            <a
-              href="tel:+18762689319"
-              style={{
-                color: 'rgba(255,255,255,0.78)',
-                textDecoration: 'none',
-              }}
-            >
-              📞 +1 (876) 268-9319
-            </a>
+           
           </div>
 
           <div style={{ display: 'flex', gap: 12 }}>

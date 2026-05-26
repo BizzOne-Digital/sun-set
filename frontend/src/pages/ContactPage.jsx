@@ -44,7 +44,7 @@ export default function ContactPage() {
               <p style={{ fontSize:14, color:'#666', lineHeight:1.8, marginBottom:32 }}>Have questions about our property, availability, or services? Reach out and we'll respond within a few hours.</p>
 
               {[
-                { icon:'📍', label:'Address', val:'119 Riviera Blvd, Ocho Rios, Jamaica', href:null },
+                { icon:'📍', label:'Address', val:'Tower Isle, St. Mary, Jamaica | Near Ocho Rios', href:null },
                 { icon:'📞', label:'Phone', val:'+1 (876) 268-9319', href:'tel:+18762689319' },
                 { icon:'✉️', label:'Email', val:'info@sunsetretreatja.com', href:'mailto:info@sunsetretreatja.com' },
                 { icon:'💬', label:'WhatsApp', val:'Message us directly', href:'https://wa.me/18762689319' },

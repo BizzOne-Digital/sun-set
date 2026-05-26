@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const STATS = [
   { val:'5★', label:'Average Rating' },
   { val:'500+', label:'Happy Guests' },
-  { val:'2', label:'Luxury Suites' },
+  { val:'2', label:'Island Suites' },
   { val:'24/7', label:'Guest Support' },
 ];
 

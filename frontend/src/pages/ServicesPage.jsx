@@ -29,7 +29,7 @@ export default function ServicesPage() {
         <div className="container" style={{ position:'relative', zIndex:1 }}>
           <p className="section-label">What We Offer</p>
           <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:'clamp(28px,5vw,50px)', fontWeight:700, color:'#fff', marginTop:10 }}>Our Services</h1>
-          <p style={{ fontSize:14, color:'rgba(255,255,255,0.7)', marginTop:10, maxWidth:500, margin:'10px auto 0' }}>Professional Airbnb management & cleaning services in Ocho Rios, Jamaica</p>
+          <p style={{ fontSize:14, color:'rgba(255,255,255,0.7)', marginTop:10, maxWidth:500, margin:'10px auto 0' }}>Professional Airbnb management & cleaning services in Tower Isle, near Ocho Rios, Jamaica</p>
         </div>
       </div>
 
