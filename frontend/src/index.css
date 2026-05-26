@@ -109,3 +109,15 @@ button { font-family: var(--font-sans); }
   .steps-grid { grid-template-columns: 1fr !important; }
   .attractions-grid { grid-template-columns: 1fr !important; }
 }
+  /* ── NEW SECTIONS (added via content update) ─── */
+
+  /* Perfect For + Why Guests Love It */
+  .perfect-for-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+
+  /* Transportation + Local Experience */
+  .transport-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+
+@media (max-width: 768px) {
+  .perfect-for-grid { grid-template-columns: 1fr !important; gap: 36px !important; }
+  .transport-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+}

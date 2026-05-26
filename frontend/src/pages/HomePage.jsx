@@ -6,8 +6,8 @@ import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
 import AvailabilityChecker from '../components/AvailabilityChecker';
 import BookingModal from '../components/BookingModal';
-
-const HERO_BG = 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1800&q=85';
+const LOGO = '/logo.png';
+const HERO_BG = '/property-gate.jpg';
 const HERO_ROOM = 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=900&q=80';
 
 const FEATURES = [
@@ -27,7 +27,6 @@ const THINGS = [
   { img:'https://images.unsplash.com/photo-1562701193-2c694bd0fe15?q=80', title:'River Tubing', desc:'Peaceful river adventure' },
   { img:'https://images.unsplash.com/photo-1536869338989-e7ffd2297454?q=80', title:'Beach Day', desc:'White sand beaches' },
 ];
-
 function Stars({ n=5 }) {
   return <div style={{display:'flex',gap:2}}>{Array(n).fill(0).map((_,i)=><svg key={i} width="13" height="13" viewBox="0 0 24 24" fill="#C9933A"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>)}</div>;
 }
@@ -161,9 +160,33 @@ export default function HomePage() {
               ))}
               <Link to="/manage" className="btn-outline-gold" style={{marginTop:16,fontSize:12}}>LEARN MORE</Link>
             </div>
-            <div className="services-logo" style={{width:110,height:110,borderRadius:'50%',background:'#fff',display:'flex',alignItems:'center',justifyContent:'center',padding:8,boxShadow:'0 8px 30px rgba(0,0,0,0.3)',flexShrink:0,marginTop:16}}>
-              <div style={{textAlign:'center',fontFamily:"'Playfair Display',serif",fontSize:10,color:'#1A2540',fontWeight:700,lineHeight:1.4}}>SUNSET<br/>RETREAT<br/><span style={{color:'#C9933A'}}>JA</span></div>
-            </div>
+            <div
+  className="services-logo"
+  style={{
+    width:110,
+    height:110,
+    borderRadius:'50%',
+    background:'#fff',
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'center',
+    padding:10,
+    boxShadow:'0 8px 30px rgba(0,0,0,0.3)',
+    flexShrink:0,
+    marginTop:16,
+    overflow:'hidden'
+  }}
+>
+  <img
+    src={LOGO}
+    alt="Sunset Retreat"
+    style={{
+      width:'82%',
+      height:'82%',
+      objectFit:'contain'
+    }}
+  />
+</div>
             <div>
               <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:14}}>
                 <div style={{width:40,height:40,background:'rgba(201,147,58,0.15)',display:'flex',alignItems:'center',justifyContent:'center',borderRadius:4,flexShrink:0}}><svg width="20" height="20" fill="none" stroke="#C9933A" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 6.5L6 3 3 6l3.5 3.5M14 10l-4 4M17.5 13.5L21 17l-3 3-3.5-3.5"/></svg></div>
@@ -255,7 +278,7 @@ export default function HomePage() {
       {/* PERFECT FOR + WHY GUESTS LOVE IT */}
       <section className="section-pad" style={{background:'#fff'}}>
         <div className="container">
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:48}}>
+          <div className="perfect-for-grid">
             {/* Perfect For */}
             <div>
               <p className="section-label">Ideal For</p>
@@ -303,7 +326,7 @@ export default function HomePage() {
       {/* TRANSPORTATION + LOCAL EXPERIENCE */}
       <section className="section-pad" style={{background:'#1A2540'}}>
         <div className="container">
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:48}}>
+          <div className="transport-grid">
             {/* Transportation */}
             <div>
               <p className="section-label" style={{color:'#C9933A'}}>Getting Around</p>
